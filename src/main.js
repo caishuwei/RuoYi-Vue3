@@ -44,6 +44,11 @@ import TreeSelect from '@/components/TreeSelect'
 // 字典标签组件
 import DictTag from '@/components/DictTag'
 
+//引入VForm 3库
+import VForm3 from 'vform3-builds'  
+//引入VForm3样式
+import 'vform3-builds/dist/designer.style.css'  
+
 const app = createApp(App)
 
 // 全局方法挂载
@@ -80,5 +85,8 @@ app.use(ElementPlus, {
   // 支持 large、default、small
   size: Cookies.get('size') || 'default'
 })
+
+//全局注册VForm 3(同时注册了v-form-designer和v-form-render组件)
+app.use(VForm3)  
 
 app.mount('#app')
