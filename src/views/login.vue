@@ -83,6 +83,7 @@ const loginForm = ref({
   uuid: ""
 });
 
+//简单的非空检测，在失去焦点时会自动触发
 const loginRules = {
   username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
   password: [{ required: true, trigger: "blur", message: "请输入您的密码" }],
@@ -102,11 +103,16 @@ watch(route, (newRoute) => {
 }, { immediate: true });
 
 function handleLogin() {
+  //咦，一般获取元素的引用是要定义一个变量来接收，它这里直接获取当前组件的实例，然后从引用数组中就可以直接拿到el-form
+  //validate方法用于校验表单数据，规则按照loginRules
   proxy.$refs.loginRef.validate(valid => {
+    //这里对校验通过进行处理，不通过的根据校验规则会有ui提示
     if (valid) {
       loading.value = true;
-      // 勾选了需要记住密码设置在 cookie 中设置记住用户名和密码
       if (loginForm.value.rememberMe) {
+        // 勾选了需要记住密码设置在 cookie 中设置记住用户名和密码，密码进行了在存入cookie之前进行了加密，
+        // 不过加密的key也是直接写在js中，不知道会不会有安全问题
+        // 记住账号是通过cookie进行记录的，这里将其设置为30天后过期
         Cookies.set("username", loginForm.value.username, { expires: 30 });
         Cookies.set("password", encrypt(loginForm.value.password), { expires: 30 });
         Cookies.set("rememberMe", loginForm.value.rememberMe, { expires: 30 });
@@ -158,6 +164,7 @@ function getCookie() {
   };
 }
 
+//页面初始化时，获取一次验证码，从cookie加载已经记住的用户名和密码
 getCode();
 getCookie();
 </script>
