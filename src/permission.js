@@ -32,10 +32,13 @@ router.beforeEach((to, from, next) => {
           usePermissionStore().generateRoutes().then(accessRoutes => {
             // 根据roles权限生成可访问的路由表
             accessRoutes.forEach(route => {
+              //目前只有一个若依官网的菜单路径是网络地址，不需要添加到路由，其他的逐个添加到路由表
+              //现在看来将后台返回的路由数据展开并修改路径就是为了这里服务的
               if (!isHttp(route.path)) {
                 router.addRoute(route) // 动态添加可访问路由表
               }
             })
+            //...拷贝了一个本来要跳转的页面，replace是替换历史记录
             next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
           })
         }).catch(err => {
